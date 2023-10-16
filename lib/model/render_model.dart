@@ -1,18 +1,17 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import 'app_model.dart';
-import 'widget_model.dart';
+import 'banner.dart';
+import 'horizontal_list.dart';
 part "render_model.g.dart";
 
 @JsonSerializable()
 class RenderModel {
-  final App app;
-  final List<Widget> widgets;
+  App? app;
+  List<BannerModel>? banner;
+  List<HorizontalList>? horizontalList;
 
-  RenderModel({
-    required this.widgets,
-    required this.app,
-  });
+  RenderModel(this.app, this.banner, this.horizontalList);
 
   factory RenderModel.fromJson(Map<String, dynamic> json) =>
       _$RenderModelFromJson(json);

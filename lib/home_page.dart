@@ -1,8 +1,9 @@
 import 'dart:convert';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ui_rendering_engine/model/render_model.dart';
 import 'services/api_service.dart';
+import 'widgets/horizontal_banner.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -14,14 +15,19 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   RenderModel? _userModel;
 
-   @override
+  @override
   void initState() {
+    print('init state called');
     _getData();
     super.initState();
   }
 
   void _getData() async {
+    print('getData called');
     _userModel = await ApiService().getRenderData();
+    print('CR-> ${_userModel?.banner?.length}');
+    print('CR-> ${_userModel?.banner?.first.image}');
+    // print('CR-> ${_userModel!.banner?[1].footerText}');
     Future.delayed(const Duration(seconds: 1)).then((value) => setState(() {}));
   }
 
@@ -31,35 +37,17 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: const Text('UI Rendering APP'),
       ),
-      body: _userModel?.widgets.length == null
+      body: _userModel?.banner == null
           ? const Center(
               child: CircularProgressIndicator(),
             )
+          // : const Center(child: Text("Hello"))
           : ListView.builder(
-              itemCount: _userModel?.widgets.length,
+              scrollDirection: Axis.horizontal,
+              itemCount: _userModel?.banner?.length,
               itemBuilder: (context, index) {
-                return Card(
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(_userModel?.widgets[index].header_text.toString()?? ''),
-                          Text(_userModel?.widgets[index].footer_text.toString() ?? ''),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20.0,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(_userModel?.widgets[index].items.toString()?? ''),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
+                return HorizontalBannerScreen(_userModel?.banner?[index]);
+                // return const Center(child: Text("Hello"));
               },
             ),
     );
